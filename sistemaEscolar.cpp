@@ -9,18 +9,18 @@ string aulas[5][4]; //primeiro o dia e depois a sequencia de turmas
 
 
 //Estrutura de alunos 
-struct Alunos{
+struct Aluno{
 string nome;
 string matricula;
 string telefone;
-int idade;
+string idade;
 string turma;
 };
 //Estrutura de turmas
 struct Turmas{
 string codigo;
 string nome;
-Alunos alunos[20];
+Aluno alunos[20];
 
 };
 
@@ -144,6 +144,30 @@ string desenfilaAula(int dia, int numProfessor){
     }
     return resposta;
 }
+
+
+//Função de gerar matricula, gera um numero aleatorio e soma ele ocm a string SINF ( parecido com o que é no cefet)
+string gerarMatricula(){
+    string matricula;
+    matricula= to_string(rand() % 9000 + 1000)+ "SINF";
+    return matricula;
+}
+
+//Função de cadastrar os alunos 1 - pergunta o nome, 2 - pergunta o telefone dele, 3 - pergunta a idade, 4 - em qual turma ele ficará e por ultimo gera a matricula
+void cadastrarAluno(Aluno &aluno){
+    cout<<"Qual o nome do aluno: ";
+    getline(cin, aluno.nome);
+    cout<<"Qual o telefone desse aluno (colocar apenas números e com DDD): ";
+    getline(cin,aluno.telefone);
+    cout<<"Qual a idade desse aluno ";
+    getline(cin,aluno.idade);
+    cout<<"Escreve o nome da turma que o aluno vai pertencer: ";
+    //Mais pra frente eu coloco um if ver se a turma está cheia
+    getline(cin, aluno.turma);
+    aluno.matricula=gerarMatricula();
+    cout<<"A matricula desse aluno foi gerada, ela é " << aluno.matricula;
+}
+
 
 
 int main(){
