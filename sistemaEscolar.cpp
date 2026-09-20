@@ -15,12 +15,17 @@ string matricula;
 string telefone;
 string idade;
 string turma;
+string email;
+string cpf;
 };
+
+
 //Estrutura de turmas
 struct Turmas{
 string codigo;
 string nome;
 Aluno alunos[20];
+bool ativo;
 
 };
 
@@ -31,6 +36,7 @@ string nome;
 string codigo;
 string telefone;
 string emailInstitucional;
+bool ativo;
 };
 
 
@@ -43,10 +49,11 @@ return codigo;
 }
 
 //FunÇão de cadastrar turmas so precisa gerar o Codigo da turma e saber qual é o nome da turma por exemplo turma A
-void cadastarTurmas(Turmas &turma){
+void cadastrarTurmas(Turmas &turma){
     cout<<"Qual o nome da turma: ";
     getline(cin, turma.nome);
     turma.codigo=gerarCodigoTurma();   
+    turma.ativo=true;
 }
 
 
@@ -86,26 +93,28 @@ return email;
 
 //função de cadastrar o professor
 //NÃO ESTA COMPLETO, esotu pensando em como eu posso guardar da maneira mais eficiente e rapida os professores dentro de uma variavel
-void enfilaProfessor(Professor professor[], int fimProfessor){
-    if(fimProfessor<3){
-        fimProfessor++;
+void cadastroProfessor(Professor professor){
+        getchar();
         cout<<"Qual o nome do professor: ";
-        getline(cin, professor[fimProfessor].nome);
+        getline(cin, professor.nome);
         cout<<"Qual o telefone do professor: ";
-        getline(cin, professor[fimProfessor].telefone);
-        professor[fimProfessor].codigo=gerarCodigoProfessor();
-        professor[fimProfessor].emailInstitucional=gerarEmail(professor[fimProfessor].nome);
-    } else {
-        cout<<"Você ja alcançou o limite máximo de professores ";
-    }
+        getline(cin, professor.telefone);
+        professor.codigo=gerarCodigoProfessor();
+        professor.emailInstitucional=gerarEmail(professor.nome);
+        professor.ativo=true;
+    
 } // fim função de cadastrar o professor
 
 
 
 //funÇão pra exibir os professores cadastrados caso isso seja solicitado
-string exibirProfessor(Professor professor[], int fimProfessor){
-    for(int i=0;i<fimProfessor;i++){
-        cout<< i+1 << " - "<< professor[i].nome;
+void exibirProfessor(Professor professor[], int tamanho){
+    for(int i=0;i<tamanho;i++){
+        if(professor[i].ativo==true){
+            cout<< i+1 << " - "<< professor[i].nome;
+        } else {
+            cout<< i+1 << " - Vazio \n";
+        }
     }
 }
 
@@ -166,26 +175,76 @@ void cadastrarAluno(Aluno &aluno){
     getline(cin, aluno.turma);
     aluno.matricula=gerarMatricula();
     cout<<"A matricula desse aluno foi gerada, ela é " << aluno.matricula;
+
 }
 
 
 
 int main(){
 
-    int dia, numProfessor, opcao, inicioProfessor=-1, fimProfessor=-1;
+    int dia, numProfessor, opcao;
     string nomeTurma;
-    Professor professores[4];
+    Professor professores[4]={};
+    Turmas turmas[4]={};
 
 
     do{
     cout<<"Escolha uma das opções a seguir: \n";
     cout<<"1 - Adicionar professor   2 - Adicionar Turmas\n";
-    cout<<"3 - Adicionar turmas ao professor  4 - Exibir Professores";
+    cout<<"3 - Adicionar turmas ao professor  4 - Exibir Professores\n ";
     cin>>opcao;
 
     switch(opcao){
         case 1:
-        enfilaProfessor(&professores[fimProfessor], fimProfessor);
+        for(int i=0;i<5;i++){
+            if(i<4){
+                if(professores[i].ativo==false){   
+                    cadastroProfessor(professores[i]);
+                    break;
+                }
+            } else
+                cout<<"O limite de professores ja foi atingido ";
+               
+        }
+        break;
+        case 2:
+        for(int i=0;i<4;i++){
+            if(i<4){
+                if(turmas[i].ativo==false){   
+                    cadastrarTurmas(turmas[i]);
+                    break;
+                }
+            } else
+                cout<<"O limite de turmas ja foi atingido ";
+        }
+        break;
+        case 3:
+            int opcao2;
+            exibirProfessor(professores, 4);
+             do{ 
+                cout<<"0 - parar \n 1 - Segunda\n 2 - Terça \n 3 - Quarta \n 4 - Quinta \n 5 - Sexta \n ";
+                cout<<"Escolha o dia ";
+                cin>>dia;
+                system("clear");
+                cout<<"Escolha a turma (nome ou numero da turma)";
+                cin>>nomeTurma;
+                exibirProfessor(professores, 4);
+                cout<<"Escolha o numero do Professor ";
+                cin>>numProfessor;
+                enfilaAula(dia, nomeTurma, numProfessor);
+                cout<<"0 para parar e voltar ao menu principal";
+                cin>>opcao2;
+                system("clear");
+
+            }while(opcao2!=0);
+
+        break;
+        case 4:
+        exibirProfessor(professores, 4);
+        cout<<"\nPrecione enter para sair ";
+        getchar();
+
+
         break;
         default:
         break;
@@ -194,27 +253,8 @@ int main(){
 
     } while(opcao!=0);
 
-    do{ 
-    cout<<"0 - parar \n 1 - Segunda\n 2 - Terça \n 3 - Quarta \n 4 - Quinta \n 5 - Sexta \n ";
-    cout<<"Escolha o dia ";
-    cin>>dia;
-    cout<<"Escolha a turma (nome ou numero da turma)";
-    cin>>nomeTurma;
-    cout<<"Escolha o Professor ";
-    cin>>numProfessor;
-    enfilaAula(dia, nomeTurma, numProfessor);
-    cout<<"2 para parar";
-    cin>>opcao;
-    system("cls");
+    cout<<"FIM DO SISTEMA";
 
-    }while(opcao!=0);
-    
-    cout<<"Escolha o dia que quer saber a sequencia \n";
-    cin>>dia;
-    cout<<"sequencia de turma é \n";
-    for(int i=0;i<4;i++){
-        cout<<desenfilaAula(dia,numProfessor);
-    }
-
+    return 0;
 
 }
