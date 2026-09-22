@@ -8,7 +8,7 @@ int inicioAula[5]={-1,-1,-1,-1,-1}, fimAula[5]={-1,-1,-1,-1,-1};
 string aulas[5][4]; //primeiro o dia e depois a sequencia de turmas
 
 
-//Estrutura de alunos 
+//Estrutura de alunos
 struct Aluno{
 string nome;
 string matricula;
@@ -52,7 +52,7 @@ return codigo;
 void cadastrarTurmas(Turmas &turma){
     cout<<"Qual o nome da turma: ";
     getline(cin, turma.nome);
-    turma.codigo=gerarCodigoTurma();   
+    turma.codigo=gerarCodigoTurma();  
     turma.ativo=true;
 }
 
@@ -93,7 +93,7 @@ return email;
 
 //função de cadastrar o professor
 //NÃO ESTA COMPLETO, esotu pensando em como eu posso guardar da maneira mais eficiente e rapida os professores dentro de uma variavel
-void cadastroProfessor(Professor professor){
+void cadastroProfessor(Professor &professor){
         getchar();
         cout<<"Qual o nome do professor: ";
         getline(cin, professor.nome);
@@ -102,7 +102,7 @@ void cadastroProfessor(Professor professor){
         professor.codigo=gerarCodigoProfessor();
         professor.emailInstitucional=gerarEmail(professor.nome);
         professor.ativo=true;
-    
+   
 } // fim função de cadastrar o professor
 
 
@@ -111,7 +111,28 @@ void cadastroProfessor(Professor professor){
 void exibirProfessor(Professor professor[], int tamanho){
     for(int i=0;i<tamanho;i++){
         if(professor[i].ativo==true){
-            cout<< i+1 << " - "<< professor[i].nome;
+            cout<< i+1 << " - "<< professor[i].nome << "\n";
+        } else {
+            cout<< i+1 << " - Vazio \n";
+        }
+    }
+}
+
+
+//Função gera emuma unica linha a sequenia de turmas do professor, na teoria isso seia so para o adm usar, a fnção que o professor fosse usar para ver qual é a sequencia dele seria o desenfilaAula
+string exibirTurmaProfessor(Professor professor){
+    string resposta;
+    for(int i=0;i<4;i++){
+        resposta+=" "+ professor.turmas[i] + " ";
+    }
+    return resposta;
+}
+
+void exibirProfessorETurma(Professor professor[], int tamanho){
+    for(int i=0;i<tamanho;i++){
+        if(professor[i].ativo==true){
+            cout<< i+1 << " - "<< professor[i].nome << exibirTurmaProfessor(professor[i]) <<"\n";
+           
         } else {
             cout<< i+1 << " - Vazio \n";
         }
@@ -119,12 +140,16 @@ void exibirProfessor(Professor professor[], int tamanho){
 }
 
 //FunÇão que enfila as aulas dentro de uma fila com base no dia e qual a turma
-void enfilaAula(int dia, string turma, int numProfessor){
+//So para explicar professor, essa função aq esta fazndo duas funções, ela ta guardando turmas em duas variaveis diferentes
+//Uma é algo mais estruturado a egunda eu ainda vou mexer e está mais simples
+//sem contar que uma é para o Professor ver a outra é para o Admin ver ( na teoria)
+void enfilaAula(int dia, string turma, int numProfessor, Professor &professor){
 
-if(fimAula[numProfessor-1]<3){
-fimAula[numProfessor-1]++;
-aulas[dia-1][fimAula[numProfessor-1]]=turma;
-cout<<fimAula[numProfessor-1]<< "\n";
+if(fimAula[numProfessor]<3){
+fimAula[numProfessor]++;
+aulas[dia][fimAula[numProfessor]]=turma;
+professor.turmas[fimAula[numProfessor]]=turma;
+cout<<fimAula[numProfessor]<< "\n";
 } else {
     cout<<"A quantidade de materias para esse dia ja está cheia";
 }
@@ -133,19 +158,19 @@ if(inicioAula[numProfessor-1]==-1){
     inicioAula[numProfessor-1]=0;
 }
 
-} //Fim enfila 
+} //Fim enfila
 
 
 //o Desenfila aula foi baseado para apenas mostrar qual é a sequencia da fila por isso ele nao volta para o -1 no finale sim para 0
 string desenfilaAula(int dia, int numProfessor){
     string resposta;
-    if(inicioAula[numProfessor-1]>=0){
-        resposta=aulas[dia-1][inicioAula[numProfessor-1]];
-        if(inicioAula[numProfessor-1]!=fimAula[numProfessor-1]){
-            inicioAula[numProfessor-1]++;
+    if(inicioAula[numProfessor]>=0){
+        resposta=aulas[dia][inicioAula[numProfessor]];
+        if(inicioAula[numProfessor]!=fimAula[numProfessor]){
+            inicioAula[numProfessor]++;
         }else{
-            inicioAula[numProfessor-1]=0;
-            fimAula[numProfessor-1]=0;
+            inicioAula[numProfessor]=0;
+            fimAula[numProfessor]=0;
         }
 
     } else{
@@ -192,13 +217,14 @@ int main(){
     cout<<"Escolha uma das opções a seguir: \n";
     cout<<"1 - Adicionar professor   2 - Adicionar Turmas\n";
     cout<<"3 - Adicionar turmas ao professor  4 - Exibir Professores\n ";
+    cout<<"5 - Exibir Professores e suas aulas\n";
     cin>>opcao;
 
     switch(opcao){
         case 1:
         for(int i=0;i<5;i++){
             if(i<4){
-                if(professores[i].ativo==false){   
+                if(professores[i].ativo==false){  
                     cadastroProfessor(professores[i]);
                     break;
                 }
@@ -210,7 +236,7 @@ int main(){
         case 2:
         for(int i=0;i<4;i++){
             if(i<4){
-                if(turmas[i].ativo==false){   
+                if(turmas[i].ativo==false){  
                     cadastrarTurmas(turmas[i]);
                     break;
                 }
@@ -220,8 +246,13 @@ int main(){
         break;
         case 3:
             int opcao2;
+            cout<<"Seus professores são:\n";
             exibirProfessor(professores, 4);
-             do{ 
+            cout<<"\nPrecione enter para continuar";
+            getchar();
+            getchar();
+            system("clear");
+             do{
                 cout<<"0 - parar \n 1 - Segunda\n 2 - Terça \n 3 - Quarta \n 4 - Quinta \n 5 - Sexta \n ";
                 cout<<"Escolha o dia ";
                 cin>>dia;
@@ -231,7 +262,7 @@ int main(){
                 exibirProfessor(professores, 4);
                 cout<<"Escolha o numero do Professor ";
                 cin>>numProfessor;
-                enfilaAula(dia, nomeTurma, numProfessor);
+                enfilaAula(dia-1, nomeTurma, numProfessor,professores[numProfessor-1]);
                 cout<<"0 para parar e voltar ao menu principal";
                 cin>>opcao2;
                 system("clear");
@@ -243,8 +274,10 @@ int main(){
         exibirProfessor(professores, 4);
         cout<<"\nPrecione enter para sair ";
         getchar();
-
-
+       
+        break;
+        case 5:
+        exibirProfessorETurma(professores, 4);
         break;
         default:
         break;
