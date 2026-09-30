@@ -17,6 +17,9 @@ string idade;
 string turma;
 string email;
 string cpf;
+string nomeMateria[10];
+string notaMateria[10];
+bool ativo;
 };
 
 
@@ -24,13 +27,14 @@ string cpf;
 struct Turmas{
 string codigo;
 string nome;
-Aluno alunos[20];
+int quantidadeAluno;
 bool ativo;
 
 };
 
-//estrutura que define quais são os parametros de Professor
+//estrutura de Professor
 struct Professor{
+string AulaDoDia[5][4];// 5 dias para um limite de 4 turmas por dia.
 string turmas[4];
 string nome;
 string codigo;
@@ -40,7 +44,7 @@ bool ativo;
 };
 
 
-//funÇões relacionadas a TURMAS
+//funções relacionadas a TURMAS
 //O codigo da turma sempre vai ser T mais um numero aleatorio
 string gerarCodigoTurma(){
 string codigo;
@@ -92,7 +96,6 @@ return email;
 
 
 //função de cadastrar o professor
-//NÃO ESTA COMPLETO, esotu pensando em como eu posso guardar da maneira mais eficiente e rapida os professores dentro de uma variavel
 void cadastroProfessor(Professor &professor){
         getchar();
         cout<<"Qual o nome do professor: ";
@@ -106,6 +109,18 @@ void cadastroProfessor(Professor &professor){
 } // fim função de cadastrar o professor
 
 
+//Mostra quais são os dados dos professores
+void mostrarDadosProfessor(Professor &professor){
+    cout<<"Nome - "<< professor.nome <<"\n";
+    cout<<"email - "<< professor.emailInstitucional <<"\n";
+    cout<<"Telefone- "<< professor.telefone <<"\n";
+    cout<<"Codigo - "<< professor.codigo <<"\n";
+    cout<<"Turmas que ele da aula";
+    for(int i=0;i<4;i++){
+        cout<<" - " <<professor.turmas[i];
+    }
+   
+}
 
 //funÇão pra exibir os professores cadastrados caso isso seja solicitado
 void exibirProfessor(Professor professor[], int tamanho){
@@ -128,6 +143,7 @@ string exibirTurmaProfessor(Professor professor){
     return resposta;
 }
 
+// Exibe o PROFESSOR as Turmas em que ele da aula, pensando em fazer algo parecido mas com materias
 void exibirProfessorETurma(Professor professor[], int tamanho){
     for(int i=0;i<tamanho;i++){
         if(professor[i].ativo==true){
@@ -148,7 +164,7 @@ void enfilaAula(int dia, string turma, int numProfessor, Professor &professor){
 if(fimAula[numProfessor]<3){
 fimAula[numProfessor]++;
 aulas[dia][fimAula[numProfessor]]=turma;
-professor.turmas[fimAula[numProfessor]]=turma;
+professor.AulaDoDia[dia][fimAula[numProfessor]]=turma;
 cout<<fimAula[numProfessor]<< "\n";
 } else {
     cout<<"A quantidade de materias para esse dia ja está cheia";
@@ -174,7 +190,7 @@ string desenfilaAula(int dia, int numProfessor){
         }
 
     } else{
-        cout<<"Esse dia está vazio, adicione aulas para esse professor";
+        cout<<"\nEsse dia está vazio, adicione aulas para esse professor";
     }
     return resposta;
 }
@@ -188,18 +204,33 @@ string gerarMatricula(){
 }
 
 //Função de cadastrar os alunos 1 - pergunta o nome, 2 - pergunta o telefone dele, 3 - pergunta a idade, 4 - em qual turma ele ficará e por ultimo gera a matricula
-void cadastrarAluno(Aluno &aluno){
+void cadastrarAluno(Aluno &aluno, Turmas turmas[]){
+    bool teste=false;
     cout<<"Qual o nome do aluno: ";
     getline(cin, aluno.nome);
     cout<<"Qual o telefone desse aluno (colocar apenas números e com DDD): ";
     getline(cin,aluno.telefone);
-    cout<<"Qual a idade desse aluno ";
+    cout<<"Qual a idade desse aluno: ";
     getline(cin,aluno.idade);
-    cout<<"Escreve o nome da turma que o aluno vai pertencer: ";
-    //Mais pra frente eu coloco um if ver se a turma está cheia
-    getline(cin, aluno.turma);
-    aluno.matricula=gerarMatricula();
-    cout<<"A matricula desse aluno foi gerada, ela é " << aluno.matricula;
+    do{
+        cout<<"Escreve o nome da turma que o aluno vai pertencer: ";
+        getline(cin, aluno.turma);
+        for(int i=0;i<4;i++){
+            if(aluno.turma==turmas[i].nome){
+                if(turmas[i].quantidadeAluno<=20){
+                    turmas[i].quantidadeAluno++;
+                    teste=true;
+                } else{
+                    cout<<"A turma escolhida já está cheia, escolha outra turma para atribuirao aluno.\n";
+                }
+                break;
+            }
+        }
+    } while(teste==false);
+   
+                aluno.matricula=gerarMatricula();
+   
+    cout<<"A matricula desse aluno foi gerada, ela é: " << aluno.matricula;
 
 }
 
@@ -207,17 +238,19 @@ void cadastrarAluno(Aluno &aluno){
 
 int main(){
 
-    int dia, numProfessor, opcao;
+    int dia, numProfessor, opcao, num;
     string nomeTurma;
     Professor professores[4]={};
     Turmas turmas[4]={};
+    Aluno alunos[80]={};
 
 
     do{
     cout<<"Escolha uma das opções a seguir: \n";
     cout<<"1 - Adicionar professor   2 - Adicionar Turmas\n";
     cout<<"3 - Adicionar turmas ao professor  4 - Exibir Professores\n ";
-    cout<<"5 - Exibir Professores e suas aulas\n";
+    cout<<"5 - Exibir Professores e suas aulas 6 - Mostrar dados do professor\n";
+    cout<<"7 - Cadastrar Alunos 8 - Mostrar proxima aula do Professor\n";
     cin>>opcao;
 
     switch(opcao){
@@ -234,6 +267,7 @@ int main(){
         }
         break;
         case 2:
+        //Como professores é algo pequeno eu fiz um for por enquanto apra achar a posição vazia com base no bool ativo
         for(int i=0;i<4;i++){
             if(i<4){
                 if(turmas[i].ativo==false){  
@@ -247,7 +281,6 @@ int main(){
         case 3:
             int opcao2;
             cout<<"Seus professores são:\n";
-            exibirProfessor(professores, 4);
             cout<<"\nPrecione enter para continuar";
             getchar();
             getchar();
@@ -278,6 +311,40 @@ int main(){
         break;
         case 5:
         exibirProfessorETurma(professores, 4);
+        break;
+        case 6:
+        int num;
+        exibirProfessor(professores, 4);
+        cout<<"\nEscolha qual professor você quer pegar os dados: ";
+        cin>>num;
+        if(num<=4 && num >=0){
+            mostrarDadosProfessor(professores[num-1]);
+        } else {
+            cout<<" Numero inválido\n Você voltará ao menu principal";
+            cout<<"\nPressione ENTER";
+            getchar();
+        }
+       
+        break;
+        case 7:
+        for(int i=0;i<80;i++){
+            if(i<80){
+                if(alunos[i].ativo==false){  
+                    cadastrarAluno(alunos[i], turmas);
+                    break;
+                }
+            } else
+                cout<<"O limite de alunos ja foi atingido ";
+               
+        }
+        break;
+        case 8:
+        exibirProfessor(professores, 4);
+        cout<<"\nEscolha qual professor: ";
+        cin>> num;
+        cout<<"\nEscolha qual dia ";
+        cin>>dia;
+        cout<<desenfilaAula(dia, num);
         break;
         default:
         break;
