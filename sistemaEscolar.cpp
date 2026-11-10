@@ -34,7 +34,7 @@ bool ativo;
 };
 
 //Inicio da Cadeia de alunos
-NoAluno* inicioAlunos = nullptr;
+NoAluno* inicioAlunos = NULL;
 
 //estrutura de Professor
 struct Professor {
@@ -149,14 +149,32 @@ return resposta;
 
 // Exibe o PROFESSOR as Turmas em que ele da aula, pensando em fazer algo parecido mas com materias
 void exibirProfessorETurma(Professor professor[], int tamanho) {
-for(int i=0; i<tamanho; i++) {
-if(professor[i].ativo==true) {
-cout<< i+1 << " - "<< professor[i].nome << exibirTurmaProfessor(professor[i]) <<"\n";
+   for(int i=0; i<tamanho; i++) {
+      if(professor[i].ativo==true) {
+      cout<< i+1 << " - "<< professor[i].nome << exibirTurmaProfessor(professor[i]) <<"\n";
 
-} else {
-cout<< i+1 << " - Vazio \n";
+      } else {
+         cout<< i+1 << " - Vazio \n";
+      }
+   }
 }
-}
+
+//Função ordenarProfessor
+
+void ordenarProfessor(Professor professor[], int tamanho) {
+   bool trocou= true;
+   while(trocou) {
+      trocou=false;
+      for(int i=0; i<tamanho-1; i++) {
+         if(professor[i].nome>professor[i+1].nome) {
+            Professor aux= professor[i];
+            professor[i]=professor[i+1];
+            professor[i+1]=aux;
+            trocou=true;
+         }
+      }
+   }
+
 }
 
 //FunÇão que enfila as aulas dentro de uma fila com base no dia e qual a turma
@@ -209,15 +227,16 @@ return matricula;
 
 //Inserir no Inicio
 void cadastrarAlunoInicio(Turmas turmas[]) {
-   
+
 int cont=0;
-    NoAluno* aluno;
+    NoAluno* aluno= new NoAluno;
 bool teste=false;
 for(int i=0; i<4; i++) {
    if(turmas[i].ativo==false){
        cont++;
        cout<<cont;
     }
+}
     if(cont==4){
         cout<<"Não tem turmas cadastradas, não da para adicionar um aluno, primeiro adicione uma turma";
         return;
@@ -254,12 +273,12 @@ for(int i=0; i<4; i++) {
 
 aluno->matricula=gerarMatricula();
 
-cout<<"A matricula desse aluno foi gerada, ela é: " << aluno->matricula;
+cout<<"A matricula desse aluno foi gerada, ela é: " << aluno->matricula<< "\n";
 
 }
 
 
-}
+
 int main() {
 
 int dia, numProfessor, opcao, num;
@@ -373,5 +392,6 @@ break;
 cout<<"FIM DO SISTEMA";
 
 return 0;
+
 
 }
