@@ -19,7 +19,6 @@ string email;
 string cpf;
 string nomeMateria[10];
 string notaMateria[10];
-bool ativo;
 NoAluno* prox;
 };
 
@@ -113,7 +112,7 @@ professor.ativo=true;
 } // fim função de cadastrar o professor
 
 
-//Mostra quais são os dados dos professores
+//Mostra quais são os dados do professore
 void mostrarDadosProfessor(Professor &professor) {
 cout<<"Nome - "<< professor.nome <<"\n";
 cout<<"email - "<< professor.emailInstitucional <<"\n";
@@ -162,11 +161,21 @@ void exibirProfessorETurma(Professor professor[], int tamanho) {
 //Função ordenarProfessor
 
 void ordenarProfessor(Professor professor[], int tamanho) {
-   bool trocou= true;
-   while(trocou) {
-      trocou=false;
-      for(int i=0; i<tamanho-1; i++) {
-         if(professor[i].nome>professor[i+1].nome) {
+   bool trocou= false;
+   string char1;
+   string char2;
+   int tamanhoLoop;
+//if para ver qual é o tamanho da string menor, para não dar erro de estouro de memoria
+   if(char1.length()>char2.length()) {
+      tamanhoLoop=char2.length();
+   } else {
+      tamanhoLoop=char1.length();
+   }
+   while(!trocou) {
+      for(int i=0; i<tamanhoLoop-1; i++) {
+         char1=professor[i].nome;
+         char2=professor[i+1].nome;
+         if(char1[i]>char2[i]) {
             Professor aux= professor[i];
             professor[i]=professor[i+1];
             professor[i+1]=aux;
@@ -176,6 +185,36 @@ void ordenarProfessor(Professor professor[], int tamanho) {
    }
 
 }
+
+
+void alterarProfessor(Professor professor[], int num){
+    num--;
+    string aux;
+    mostrarDadosProfessor(professor[num]);
+    cout<<"\nCaso não queria alterar o dado deixe em branco ( aperte Enter)\n";
+    cout<<"O codigo não pode ser alterado e o email é alterado automaticamente caso o noem seja alterado";
+    cout<<"Qual o nome do professor: ";
+    getline(cin, aux);
+    if(aux!=""){
+        professor.nome=aux;
+    }
+    cout<<"Qual o telefone do professor: ";
+    getline(cin, aux);
+    if(aux!=""){
+        professor[num].telefone=aux;
+    }
+    professor[num].emailInstitucional=gerarEmail(professor[num].nome);
+    cout<<"Email - "<< professor[num].emailInstitucional <<"\n";
+}
+
+
+void excluirProfessor(Professor professor[], int num){
+    num--;
+    professor[num].ativo=false;
+    cout<<"O professor foi excluido com sucesso";
+}
+
+
 
 //FunÇão que enfila as aulas dentro de uma fila com base no dia e qual a turma
 //So para explicar professor, essa função aq esta fazndo duas funções, ela ta guardando turmas em duas variaveis diferentes
@@ -231,6 +270,8 @@ void cadastrarAlunoInicio(Turmas turmas[]) {
 int cont=0;
     NoAluno* aluno= new NoAluno;
 bool teste=false;
+
+//Verifica se tem turmas cadastradas, caso não tenha ele não deixa cadastrar o aluno
 for(int i=0; i<4; i++) {
    if(turmas[i].ativo==false){
        cont++;
@@ -275,6 +316,44 @@ aluno->matricula=gerarMatricula();
 
 cout<<"A matricula desse aluno foi gerada, ela é: " << aluno->matricula<< "\n";
 
+}
+
+//Exibir aluno 
+void exibirAluno(string nome ) {
+NoAluno* aux= inicioAlunos;   
+do {
+   if(aux->nome==nome) {
+      cout<<"Nome: "<< aux->nome << "\n";
+      cout<<"Telefone: "<< aux->telefone << "\n";
+      cout<<"Idade: "<< aux->idade << "\n";
+      cout<<"Matricula: "<< aux->matricula << "\n";
+   } else{
+      aux=aux->prox;
+   }
+} while(aux!=NULL && aux->nome!=nome);
+
+ if(aux==NULL) {
+    cout<<"Aluno não encontrado\n";
+ }
+}
+
+
+void excluirAluno(NoAluno* aluno, int num){
+    num--;
+   NoAluno* aux= inicioAlunos;
+   NoAluno* anterior= NULL;  
+   for(int i=0; i<num; i++) {
+      anterior=aux;
+      aux=aux->prox;
+   }
+   if(anterior==NULL) {
+      inicioAlunos=aux->prox;
+
+   } else {
+      anterior->prox=aux->prox;  
+   }
+
+    cout<<"O aluno foi excluido com sucesso";
 }
 
 
