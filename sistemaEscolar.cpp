@@ -27,6 +27,7 @@ NoAluno* prox;
 struct Turmas {
 string codigo;
 string nome;
+string alunos[20];
 int quantidadeAluno;
 bool ativo;
 
@@ -61,6 +62,24 @@ cout<<"Qual o nome da turma: ";
 getline(cin, turma.nome);
 turma.codigo=gerarCodigoTurma();
 turma.ativo=true;
+}
+
+void excluirTurma(Turmas turma[], int num){
+    num--;
+    turma[num].ativo=false;
+    cout<<"A turma foi excluida com sucesso";
+}
+
+void verTurma(Turmas turma[], int num) {
+    num--;
+    if(turma[num].ativo==true) {
+        cout<< " - "<< turma[num].nome << "\n";
+        for(int i=0; i<turma[num].quantidadeAluno; i++) {
+            cout<< " - "<< turma[num].alunos[i] << "\n";
+        }
+    } else {
+        cout<< " - Vazio \n";
+    }
 }
 
 
@@ -196,7 +215,7 @@ void alterarProfessor(Professor professor[], int num){
     cout<<"Qual o nome do professor: ";
     getline(cin, aux);
     if(aux!=""){
-        professor.nome=aux;
+        professor[num].nome=aux;
     }
     cout<<"Qual o telefone do professor: ";
     getline(cin, aux);
