@@ -391,6 +391,9 @@ cout<<"1 - Adicionar professor   2 - Adicionar Turmas\n";
 cout<<"3 - Adicionar turmas ao professor  4 - Exibir Professores\n ";
 cout<<"5 - Exibir Professores e suas aulas 6 - Mostrar dados do professor\n";
 cout<<"7 - Cadastrar Alunos 8 - Mostrar proxima aula do Professor\n";
+cout<<"9 - Alterar Professor 10 - Ver Aluno\n";
+cout<<"11 - Excluir Professor Turma 12 - Excluir Aluno\n";
+cout<<"13 - Excluir Turma \n";
 cin>>opcao;
 
 switch(opcao) {
@@ -480,9 +483,36 @@ cout<<"\nEscolha qual dia ";
 cin>>dia;
 cout<<desenfilaAula(dia, num);
 break;
-default:
+case 9:
+exibirProfessor(professores, 4);
+cout<<"\nEscolha qual professor você quer alterar: ";
+cin>>num;
+alterarProfessor(professores, num);
+break;
+case 10:{
+string name;
+cin.ignore();
+cout<<"Digite o nome do aluno que você quer ver: ";
+cin>>name;
+exibirAluno(name);
 break;
 }
+case 11:{
+exibirProfessor(professores, 4);
+cout<<"\nEscolha qual professor você quer excluir: ";
+cin>>num;
+excluirProfessor(professores, num);
+break;
+}
+case 12:
+exibirAluno(" ");
+cout<<"\nEscolha qual aluno você quer excluir: ";
+cin>>num;
+excluirAluno(inicioAlunos, num);
+break;
+case 13:
+excluirTurma(turmas, num);
+break;}
 
 
 } while(opcao!=0);
